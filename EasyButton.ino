@@ -6,9 +6,10 @@
 #include <HTTPClient.h>
 const int BUTTON_PIN = 4;
 const int BUZZER_PIN = 5;
-const String WIFI_SSD = "[YOUR WIFI SSID]"; // 2.4 Ghz recommended
-const String WIFI_PWD = "[YOUR WIFI PWD]";
+const String WIFI_SSD = "[YOUR-WIFI-SSID]";
+const String WIFI_PWD = "[YOUR-WIFI-PWD]";
 const int LED_PIN = 2;
+TaskHandle_t TaskBeep, TaskHTTP;
 
 void printline(int spacing) {
   for (int i = 0; i != 30; i++) {
@@ -29,83 +30,95 @@ void beep(int soundNum) {
   switch (soundNum) {
     case 0:
       // generic boop
-      digitalWrite(LED_PIN, HIGH);
-      delay(100);
-      digitalWrite(LED_PIN, LOW);
       ledcWriteTone(0, 400);
-      delay(100);
+      digitalWrite(LED_PIN, HIGH);
+      delay(60);
       ledcWriteTone(0, 0);
+      digitalWrite(LED_PIN, LOW);
       delay(100);
       break;
     case 1:
-      // success tone
-      digitalWrite(LED_PIN, HIGH);
-      delay(100);
-      digitalWrite(LED_PIN, LOW);
-      delay(100);
-      digitalWrite(LED_PIN, HIGH);
-      delay(300);
-      digitalWrite(LED_PIN, LOW);
+      // success tone 1 -- on
       ledcWriteTone(0, 400);
+      digitalWrite(LED_PIN, HIGH);
       delay(100);
       ledcWriteTone(0, 0);
+      digitalWrite(LED_PIN, LOW);
       delay(30);
       ledcWriteTone(0, 1000);
+      digitalWrite(LED_PIN, HIGH);
       delay(80);
       ledcWriteTone(0, 0);
+      digitalWrite(LED_PIN, LOW);
       delay(100);
       break;
     case 2:
       // fail tone
-      digitalWrite(LED_PIN, HIGH);
-      delay(100);
-      digitalWrite(LED_PIN, LOW);
-      delay(100);
-      digitalWrite(LED_PIN, HIGH);
-      delay(300);
-      digitalWrite(LED_PIN, LOW);
-      delay(100);
       ledcWriteTone(0, 1000);
+      digitalWrite(LED_PIN, HIGH);
       delay(80);
       ledcWriteTone(0, 0);
+      digitalWrite(LED_PIN, LOW);
       delay(100);
       ledcWriteTone(0, 400);
+      digitalWrite(LED_PIN, HIGH);
       delay(400);
       ledcWriteTone(0, 0);
+      digitalWrite(LED_PIN, LOW);
       delay(100);
       break;
     case 3:
       // boot tone
-      digitalWrite(LED_PIN, HIGH);
-      delay(300);
-      digitalWrite(LED_PIN, LOW);
       //Megalovania?? yup https://github.com/AnonymousAlly/Arduino-Music-Codes/blob/master/Megalovania.ino
       ledcWriteTone(0,294);//D4
+      digitalWrite(LED_PIN, HIGH);
       delay(125);
       ledcWriteTone(0, 0);
+      digitalWrite(LED_PIN, LOW);
       delay(125);
       ledcWriteTone(0,294);//D4
+      digitalWrite(LED_PIN, HIGH);
       delay(125);
       ledcWriteTone(0, 0);
+      digitalWrite(LED_PIN, LOW);
       delay(125);
       ledcWriteTone(0,587);//D5
+      digitalWrite(LED_PIN, HIGH);
       delay(250);
       ledcWriteTone(0, 0);
+      digitalWrite(LED_PIN, LOW);
       delay(250);
       ledcWriteTone(0,440);//A4
+      digitalWrite(LED_PIN, HIGH);
       delay(250);
       ledcWriteTone(0, 0);
+      digitalWrite(LED_PIN, LOW);
       delay(250);
       break;
     case 4:
       // boop2
+      ledcWriteTone(0, 800);
       digitalWrite(LED_PIN, HIGH);
       delay(50);
-      digitalWrite(LED_PIN, LOW);
-      ledcWriteTone(0, 800);
-      delay(50);
       ledcWriteTone(0, 0);
+      digitalWrite(LED_PIN, LOW);
       delay(100);
+      break;
+    case 5:
+      // success tone 2 -- off
+      ledcWriteTone(0, 1000);
+      digitalWrite(LED_PIN, HIGH);
+      delay(100);
+      ledcWriteTone(0, 0);
+      digitalWrite(LED_PIN, LOW);
+      delay(30);
+      ledcWriteTone(0, 400);
+      digitalWrite(LED_PIN, HIGH);
+      delay(80);
+      ledcWriteTone(0, 0);
+      digitalWrite(LED_PIN, LOW);
+      delay(100);
+      break;
   }
 }
 
@@ -113,7 +126,8 @@ void beep(int soundNum) {
 // INIT
 void setup() {
   // Begin startup
-  Serial.begin(9600);
+  Serial.begin(115200);
+  printline();
   Serial.println("Initializing SmartButton...");
   printline();
 
@@ -164,6 +178,7 @@ HTTPClient http;
 
 int sendWebRequest(const char * url) {
   http.begin(url);
+  //http.setTimeout(1);
   int httpCode = http.GET();
   Serial.print("Web request returned code ");
   Serial.print(httpCode);
@@ -182,74 +197,129 @@ void toggleADevice(const char * urlOn, const char * urlOff, bool & state, const 
     Serial.println(urlOn);
     if (sendWebRequest(urlOn) == 200) {
       beep(1);
+      Serial.print(deviceName);
+      Serial.println(" should now be ON.");
     } else {
       beep(2);
+      Serial.println("Error! Device was probably not toggled");
     }
     state = true;
-    Serial.print(deviceName);
-    Serial.println(" should now be ON.");
+    
   } else {
-    // Turn device ON
+    // Turn device OFF
     Serial.println("Device is ON.");
     Serial.print("Sending request to ");
     Serial.println(urlOff);
     if (sendWebRequest(urlOff) == 200) {
-      beep(1);
+      beep(5);
+      Serial.print(deviceName);
+      Serial.println(" should now be OFF.");
     } else {
       beep(2);
+      Serial.println("Error! Device was probably not toggled");
     }
     state = false;
-    Serial.print(deviceName);
-    Serial.println(" should now be OFF.");
   }
 }
 
-// EDIT THIS BLOCK TO CHANGE WHAT THE BUTTON DOES
-// CURRENTLY TOGGLES LIGHTS ON AND OFF WITH IFTTT WEBHOOKS
 void determineAction(int intervals) {
   switch (intervals) {
-    case 0:
+    case 0: {
       // CompRoom lights
       // turn_on_light
       // turn_off_light
       beep(4);
-      toggleADevice("[WEBHOOK-URL-ON]", "[WEBHOOK-URL-OFF]", CRLights, "Computer Room Lights");
-      break;
-    case 1:
+      toggleADevice("[ON-HOOK]", "[OFF-HOOK]", CRLights, "Computer Room Lights");
+    } break;
+    case 1: {
       // Hall lights
-      //toggleADevice("on", "off", HWLights, "Basement Hallway Lights");
       for (int i = 1; i != 0; i--) {
         beep(4);
       }
-      break;
-    case 2:
+      toggleADevice("[ON-HOOK]", "[OFF-HOOK]", HWLights, "Basement Hallway Lights");
+    } break;
+    case 2: {
       // CompRoom GH
       // CGH_On
       // CGH_Off
       for (int i = 2; i != 0; i--) {
         beep(4);
       }
-      toggleADevice("[WEBHOOK-URL-ON]", "[WEBHOOK-URL-OFF]", CRGH, "Computer Room Google Home Switch");
-      break;
-    case 3:
+      toggleADevice("[ON-HOOK]", "[OFF-HOOK]", CRGH, "Computer Room Google Home Switch");
+    } break;
+    case 3: {
       // CompRoom HWDesk
       // Just_Lamp_On
       // Just_Lamp_Off
       for (int i = 3; i != 0; i--) {
         beep(4);
       }
-      toggleADevice("[WEBHOOK-URL-ON]", "[WEBHOOK-URL-OFF]", CRHWDesk, "Computer Room Homework Desk");
-      break;
-    case 4: default:
+      toggleADevice("[ON-HOOK]", "[OFF-HOOK]", CRHWDesk, "Computer Room Homework Desk");
+    } break;
+    case 5: {
+      // I'm entering
+      Serial.println("You've triggered the 'I'm entering' routine:");
+      printline(3);
+      for (int i = 5; i != 0; i--) {
+        beep(4);
+      }
+      const int leavingRoutineLinkC = 2;
+      const char * leavingRoutineLinks[leavingRoutineLinkC] = {
+        "[ON-HOOK]",
+        "[ON-HOOK]"
+      };
+      for (int i = 0; i != leavingRoutineLinkC; i++) {
+        Serial.print("Sending request to ");
+        Serial.println(leavingRoutineLinks[i]);
+        if (sendWebRequest(leavingRoutineLinks[i]) == 200) {
+          beep(1);
+          Serial.println("Webhook triggered!");
+        } else {
+          beep(2);
+          Serial.print("Error! Webhook ");
+          Serial.print(leavingRoutineLinks[i]);
+          Serial.println(" was not triggered!");
+        } 
+      }
+      CRLights = true;
+      CRGH = true;
+    } break;
+    case 4: {
       // I'm leaving
-        // Turn off comproom lights
-        // Turn off comproom gh
-        // Turn off comproom hw desk
-        // Turn on hall lights
+      Serial.println("You've triggered the 'I'm leaving' routine:");
+      printline(3);
       for (int i = 4; i != 0; i--) {
         beep(4);
       }
-      break;
+      const int leavingRoutineLinkC = 3;
+      const char * leavingRoutineLinks[leavingRoutineLinkC] = {
+        "[OFF-HOOK]",
+        "[OFF-HOOK]",
+        "[OFF-HOOK]"
+      };
+      for (int i = 0; i != leavingRoutineLinkC; i++) {
+        Serial.print("Sending request to ");
+        Serial.println(leavingRoutineLinks[i]);
+        if (sendWebRequest(leavingRoutineLinks[i]) == 200) {
+          beep(5);
+          Serial.println("Webhook triggered!");
+        } else {
+          beep(2);
+          Serial.print("Error! Webhook ");
+          Serial.print(leavingRoutineLinks[i]);
+          Serial.println(" was not triggered!");
+        } 
+      }
+      CRLights = false;
+      HWLights = true;
+      CRGH = false;
+      CRHWDesk = false;
+    } break;
+    default: {
+      beep(4);
+      beep(0);
+      Serial.println("Nothing to do.");
+    }
   }
 }
 

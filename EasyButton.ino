@@ -9,7 +9,6 @@ const int BUZZER_PIN = 5;
 const String WIFI_SSD = "[YOUR-WIFI-SSID]";
 const String WIFI_PWD = "[YOUR-WIFI-PWD]";
 const int LED_PIN = 2;
-TaskHandle_t TaskBeep, TaskHTTP;
 
 void printline(int spacing) {
   for (int i = 0; i != 30; i++) {

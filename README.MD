@@ -1,4 +1,4 @@
-**RaddedMC's SmartButton**
+# RaddedMC's SmartButton
 This project is currently a work-in-progress. Most things work but there are a few small things to be ironed out...
 Requirements:
  - An ESP32 or ESP8266 Microcontroller

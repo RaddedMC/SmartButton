@@ -4,11 +4,11 @@
 // META
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-const int BUTTON_PIN = 4;
+const int BUTTON_PIN = 16;
 const int BUZZER_PIN = 5;
 const char * WIFI_SSD = "[YOUR-WIFI-SSID]";
 const char * WIFI_PWD = "[YOUR-WIFI-PWD]";
-const int LED_PIN = 2;
+const int LED_PIN = 14;
 
 void printline(int spacing) {
   for (int i = 0; i != 30; i++) {

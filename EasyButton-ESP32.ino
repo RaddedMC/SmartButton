@@ -4,11 +4,11 @@
 // META
 #include <WiFi.h>
 #include <HTTPClient.h>
-const int BUTTON_PIN = 4;
-const int BUZZER_PIN = 5;
+const int BUTTON_PIN = 23;
+const int BUZZER_PIN = 22;
 const char * WIFI_SSD = "[YOUR-WIFI-SSID]";
 const char * WIFI_PWD = "[YOUR-WIFI-PWD]";
-const int LED_PIN = 2;
+const int LED_PIN = 5;
 
 void printline(int spacing) {
   for (int i = 0; i != 30; i++) {
@@ -283,7 +283,8 @@ void determineAction(int intervals) {
       CRLights = true;
       CRGH = true;
     } break;
-    case 4: {
+    case 4: {So I think I've decided on sticking with a weekly upload schedule, with a major video coming out every 2-3 weekends and the other weekends getting lighter projects. Unfortunately most of this week's work time was worn away by school projects and screwing around with the gadget that I'm making a video about this weekend, so my full video on it will have to be delayed, but still...
+
       // I'm leaving
       Serial.println("You've triggered the 'I'm leaving' routine:");
       printline(3);

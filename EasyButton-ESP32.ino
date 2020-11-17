@@ -283,8 +283,7 @@ void determineAction(int intervals) {
       CRLights = true;
       CRGH = true;
     } break;
-    case 4: {So I think I've decided on sticking with a weekly upload schedule, with a major video coming out every 2-3 weekends and the other weekends getting lighter projects. Unfortunately most of this week's work time was worn away by school projects and screwing around with the gadget that I'm making a video about this weekend, so my full video on it will have to be delayed, but still...
-
+    case 4: {
       // I'm leaving
       Serial.println("You've triggered the 'I'm leaving' routine:");
       printline(3);

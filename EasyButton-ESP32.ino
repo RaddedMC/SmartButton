@@ -6,8 +6,8 @@
 #include <HTTPClient.h>
 const int BUTTON_PIN = 23;
 const int BUZZER_PIN = 22;
-const char * WIFI_SSD = "[YOUR-WIFI-SSID]";
-const char * WIFI_PWD = "[YOUR-WIFI-PWD]";
+const String WIFI_SSD = "Not2";
+const String WIFI_PWD = "845NotNewpass7910";
 const int LED_PIN = 5;
 
 void printline(int spacing) {
@@ -198,11 +198,11 @@ void toggleADevice(const char * urlOn, const char * urlOff, bool & state, const 
       beep(1);
       Serial.print(deviceName);
       Serial.println(" should now be ON.");
+      state = true;
     } else {
       beep(2);
       Serial.println("Error! Device was probably not toggled");
     }
-    state = true;
     
   } else {
     // Turn device OFF
@@ -213,11 +213,11 @@ void toggleADevice(const char * urlOn, const char * urlOff, bool & state, const 
       beep(5);
       Serial.print(deviceName);
       Serial.println(" should now be OFF.");
+      state = false;
     } else {
       beep(2);
       Serial.println("Error! Device was probably not toggled");
     }
-    state = false;
   }
 }
 
@@ -283,8 +283,7 @@ void determineAction(int intervals) {
       CRLights = true;
       CRGH = true;
     } break;
-    case 4: {So I think I've decided on sticking with a weekly upload schedule, with a major video coming out every 2-3 weekends and the other weekends getting lighter projects. Unfortunately most of this week's work time was worn away by school projects and screwing around with the gadget that I'm making a video about this weekend, so my full video on it will have to be delayed, but still...
-
+    case 4: {
       // I'm leaving
       Serial.println("You've triggered the 'I'm leaving' routine:");
       printline(3);
@@ -324,14 +323,18 @@ void determineAction(int intervals) {
 }
 
 
+int timeOff = 0;
+int timeOffInterval = 260000000;
+int interval = 1000000;
+
 // MAINLOOP
 // Interval counter
 void loop() {
   int currentState = digitalRead(BUTTON_PIN);
   int timeHeld = 1; // To eliminate interval zero
-  int interval = 1000000;
   int intervals = 0;
   if (currentState == HIGH) {
+    timeOff = 0;
     while (currentState == HIGH) {
       timeHeld++;
       if (timeHeld % interval == 0) {
@@ -349,5 +352,13 @@ void loop() {
     printline(2);
     determineAction(intervals);
     printline();
+  }
+  else {
+    timeOff++;
+    if (timeOff % timeOffInterval == 0) {
+        Serial.println("Sending blank ping...");
+        
+        sendWebRequest("192.168.1.1");
+    }
   }
 }

@@ -199,11 +199,11 @@ void toggleADevice(const char * urlOn, const char * urlOff, bool & state, const 
       beep(1);
       Serial.print(deviceName);
       Serial.println(" should now be ON.");
+      state = true;
     } else {
       beep(2);
       Serial.println("Error! Device was probably not toggled");
     }
-    state = true;
     
   } else {
     // Turn device OFF
@@ -214,11 +214,11 @@ void toggleADevice(const char * urlOn, const char * urlOff, bool & state, const 
       beep(5);
       Serial.print(deviceName);
       Serial.println(" should now be OFF.");
+      state = false;
     } else {
       beep(2);
       Serial.println("Error! Device was probably not toggled");
     }
-    state = false;
   }
 }
 
@@ -324,14 +324,18 @@ void determineAction(int intervals) {
 }
 
 
+int timeOff = 0;
+int timeOffInterval = 39000000;
+int interval = 150000;
+
 // MAINLOOP
 // Interval counter
 void loop() {
   int currentState = digitalRead(BUTTON_PIN);
   int timeHeld = 1; // To eliminate interval zero
-  int interval = 150000;
   int intervals = 0;
   if (currentState == HIGH) {
+    timeOff = 0;
     while (currentState == HIGH) {
       timeHeld++;
       if (timeHeld % interval == 0) {
@@ -349,5 +353,13 @@ void loop() {
     printline(2);
     determineAction(intervals);
     printline();
+  }
+  else {
+    timeOff++;
+    if (timeOff % timeOffInterval == 0) {
+        Serial.println("Sending blank ping...");
+        
+        sendWebRequest("192.168.1.1");
+    }
   }
 }

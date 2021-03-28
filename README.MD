@@ -11,7 +11,7 @@ Instructions:
  - Build the below circuit:
  ![Fritzing diagram of RaddedMC's SmartButton circuit](EasyButton-ESP32-BB.png)
    - If you're using an ESP8266 NodeMCU, substitute D2, D4, and D6 with the pins labelled D4, D2, and D1 respectively. The resistors I used are 1kOhm.
-   - **OR** use the PCB in easybutton.zip, credits to u/kelvinh_27 for the design!
+   - **OR** use the PCB in the PCB folder, credits to kelvinhall05 for the design!
  - Clone the EasyButton.ino file that matches your board
  - Make sure your Arduino IDE is set up for an ESP32 or ESP8266 NodeMCU board
  - Set Wifi SSID and password, and set up webhooks of your choosing (make sure that you use http:// in your URL as opposed to https://. 

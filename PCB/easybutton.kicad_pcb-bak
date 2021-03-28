@@ -62,8 +62,8 @@
     (visible_elements FFFFF77F)
     (pcbplotparams
       (layerselection 0x010fc_ffffffff)
-      (usegerberextensions true)
-      (usegerberattributes false)
+      (usegerberextensions false)
+      (usegerberattributes true)
       (usegerberadvancedattributes true)
       (creategerberjobfile true)
       (excludeedgelayer true)
@@ -1304,7 +1304,7 @@
   (segment (start 139.7 118.11) (end 135.89 114.3) (width 0.6) (layer F.Cu) (net 31))
   (segment (start 139.7 121.92) (end 139.7 118.11) (width 0.6) (layer F.Cu) (net 31))
 
-  (zone (net 30) (net_name GND) (layer F.Cu) (tstamp 0) (hatch edge 0.508)
+  (zone (net 30) (net_name GND) (layer F.Cu) (tstamp 606176D2) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 32) (thermal_gap 0.508) (thermal_bridge_width 0.508))
@@ -1511,7 +1511,7 @@
       )
     )
   )
-  (zone (net 30) (net_name GND) (layer B.Cu) (tstamp 0) (hatch edge 0.508)
+  (zone (net 30) (net_name GND) (layer B.Cu) (tstamp 606176CF) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 32) (thermal_gap 0.508) (thermal_bridge_width 0.508))
